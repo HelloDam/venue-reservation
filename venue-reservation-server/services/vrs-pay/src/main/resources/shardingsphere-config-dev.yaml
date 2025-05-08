@@ -1,0 +1,37 @@
+# 数据源集合
+dataSources:
+  ds_0:
+    dataSourceClassName: com.zaxxer.hikari.HikariDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+    jdbcUrl: jdbc:mysql://127.0.0.1:3306/venue-reservation?useUnicode=true&characterEncoding=UTF-8&rewriteBatchedStatements=true&allowMultiQueries=true&serverTimezone=Asia/Shanghai
+    username: root
+    password: 12345678
+
+rules:
+  - !SHARDING
+    tables:
+      time_period_pay:
+        # 真实数据节点，比如数据库源以及数据库在数据库中真实存在的
+        actualDataNodes: ds_0.time_period_pay_${0..15}
+        # 分表策略
+        tableStrategy:
+          # 用于单分片键的标准分片场景
+          standard:
+            # 分片键
+            shardingColumn: order_sn
+            # 分片算法，对应 rules[0].shardingAlgorithms
+            shardingAlgorithmName: common_table_hash_mod
+    # 分片算法
+    shardingAlgorithms:
+      # 数据表分片算法 使用的分片算法，根据数据的hashcode来进行取模（根据上面的配置知道是mod 16），值是多少就被分配到哪个表中
+      common_table_hash_mod:
+        # 根据分片键 Hash 分片
+        type: HASH_MOD
+        # 分片数量
+        props:
+          sharding-count: 16
+    # 展现逻辑 SQL & 真实 SQL
+    # 逻辑SQL：select * from t_user where username = 'admin'
+    # 真实SQL：select * from t_user_0 where username = 'admin'
+props:
+  sql-show: true

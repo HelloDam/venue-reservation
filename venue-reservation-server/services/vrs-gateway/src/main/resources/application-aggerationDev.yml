@@ -1,0 +1,61 @@
+spring:
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      password: 12345678
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+    gateway:
+      routes:
+        - id: vrs-aggregation
+          uri: lb://vrs-aggregation
+          predicates:
+            - Path=/**
+          filters:
+            - name: TokenValidate
+              args:
+                whitePathList:
+                  - /admin/user/v1/login
+                  - /admin/user/v1/wechatLogin
+                  - /admin/user/v1/has-username
+                  - /admin/user/v1/register
+                  # 访问图片
+                  - /pic/**
+                  - /doc.html
+                  - /webjars/**
+                  - /favicon.ico
+                  - /aggregation/v3/api-docs
+                  - /aggregation/v3/api-docs/swagger-config
+                  - /aggregation/v3/api-docs/**
+                  # 支付宝回调
+                  - /api/pay-service/callback/alipay
+# knife4j的网关聚合配置 文档地址：http://{gateway.host}:{gateway.port}/doc.html
+knife4j:
+  # 聚合swagger文档
+  gateway:
+    # 是否开启Knife4j网关聚合功能(生产环境不建议开启)
+    enabled: true
+    # 排序规则(tag/operation排序自4.2.0版本新增)
+    # 取值：alpha-默认排序规则，官方swagger-ui默认实现,order-Knife4j提供的增强排序规则，开发者可扩展x-order，根据数值来自定义排序
+    tags-sorter: order
+    operations-sorter: order
+    # 指定聚合的策略(默认手动配置(manual)，服务发现(discover))
+    strategy: manual
+    # 个性化定制的部分子服务分组情况
+    routes:
+      - name: 聚合模块
+        # 服务名
+        service-name: vrs-aggregation
+        # 真实子服务访问url地址-提供OpenAPI的文档
+        url: /aggregation/v3/api-docs?group=default
+        # 路由前缀，兼容OpenAPI3规范在聚合时丢失contextPath属性的异常情况，由开发者自己配置contextPath,Knife4j的前端Ui做兼容处理,与url属性独立不冲突，仅OpenAPI3规范聚合需要，OpenAPI2规范不需要设置此属性,默认为(apiPathPrefix)
+        context-path: /
+        # 排序
+        order: 1
+#    basic:
+#      enable: true
+#      username: admin
+#      password: 12344321

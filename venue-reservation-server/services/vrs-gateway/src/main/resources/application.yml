@@ -1,0 +1,26 @@
+server:
+  port: 7049
+
+spring:
+  profiles:
+    active: aggerationDam
+  #      active: dam
+  #    active: aggerationProd
+  application:
+    name: vrs-gateway
+  cloud:
+    gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedHeaders: "*"
+            allowedMethods: "*"
+logging:
+  level:
+    com.alibaba.cloud: DEBUG
+vrs:
+  ip-flow-limit:
+    enable: true
+    time-window: 1
+    max-access-count: 20

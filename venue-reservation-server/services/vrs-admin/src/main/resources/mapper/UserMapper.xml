@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vrs.mapper.UserMapper">
+
+    <insert id="saveBatchIgnore">
+        INSERT IGNORE INTO user (
+        id, user_name, nick_name, user_type, email, phone_number, gender, avatar,
+        avatar_type, password, status, login_ip, login_date, point, organization_id,
+        create_time, update_time
+        ) VALUES
+        <foreach collection="userDOBatch" item="userDO" separator=",">
+            (
+            #{userDO.id}, #{userDO.userName}, #{userDO.nickName}, #{userDO.userType},
+            #{userDO.email}, #{userDO.phoneNumber}, #{userDO.gender}, #{userDO.avatar},
+            #{userDO.avatarType}, #{userDO.password}, #{userDO.status}, #{userDO.loginIp},
+            #{userDO.loginDate}, #{userDO.point}, #{userDO.organizationId},
+            #{userDO.createTime}, #{userDO.updateTime}
+            )
+        </foreach>
+    </insert>
+
+</mapper>

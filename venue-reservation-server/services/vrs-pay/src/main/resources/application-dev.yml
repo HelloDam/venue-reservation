@@ -1,0 +1,47 @@
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+  datasource:
+    # ShardingSphere 对 Driver 自定义，实现分库分表等隐藏逻辑
+    driver-class-name: org.apache.shardingsphere.driver.ShardingSphereDriver
+    # ShardingSphere 配置文件路径
+    url: jdbc:shardingsphere:classpath:shardingsphere-config-dev.yaml
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      password: 12345678
+      database: 0
+      timeout: 1800000
+      jedis:
+        pool:
+          max-active: 20 #最大连接数
+          max-wait: -1    #最大阻塞等待时间(负数表示没限制)
+          max-idle: 5    #最大空闲
+          min-idle: 0     #最小空闲
+rocketmq:
+  # rocketMq的nameServer地址
+  name-server: 127.0.0.1:9876
+  producer:
+    # 生产者组别
+    group: vrs-order-group
+    # 消息发送的超时时间
+    send-message-timeout: 10000
+    # 异步消息发送失败重试次数
+    retry-times-when-send-async-failed: 5
+    # 发送消息的最大大小，单位字节，这里等于4M
+    max-message-size: 999999999
+vrs:
+  binlog:
+    # 是否使用canal监听binlog实现事务最终一致性
+    isUse: true
+  pay:
+    alipay:
+      app-id:
+      alipay-public-key:
+      private-key:
+      gateway-url: https://openapi-sandbox.dl.alipaydev.com/gateway.do
+      notify-url: http://域名:端口/api/pay-service/callback/alipay
+      return-url: http://hellodam.website

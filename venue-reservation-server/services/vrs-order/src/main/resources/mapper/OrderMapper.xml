@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vrs.mapper.OrderMapper">
+    <select id="selectByOrderSn" resultType="com.vrs.domain.entity.OrderDO">
+        select * from time_period_order where order_sn = #{orderSn}
+    </select>
+
+    <select id="selectStatusByOrderSn" resultType="java.lang.Integer">
+        select order_status from time_period_order where order_sn = #{orderSn}
+    </select>
+
+    <update id="updateByOrderSn" parameterType="com.vrs.domain.entity.OrderDO">
+        UPDATE time_period_order
+
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="orderDO.isDeleted != null">
+                is_deleted = #{orderDO.isDeleted},
+            </if>
+            <if test="orderDO.orderTime != null">
+                order_time = #{orderDO.orderTime, jdbcType=TIMESTAMP},
+            </if>
+            <if test="orderDO.venueId != null">
+                venue_id = #{orderDO.venueId},
+            </if>
+            <if test="orderDO.partitionId != null">
+                partition_id = #{orderDO.partitionId},
+            </if>
+            <if test="orderDO.courtIndex != null">
+                court_index = #{orderDO.courtIndex},
+            </if>
+            <if test="orderDO.timePeriodId != null">
+                time_period_id = #{orderDO.timePeriodId},
+            </if>
+            <if test="orderDO.userId != null">
+                user_id = #{orderDO.userId},
+            </if>
+            <if test="orderDO.orderStatus != null">
+                order_status = #{orderDO.orderStatus},
+            </if>
+            <if test="orderDO.payAmount != null">
+                pay_amount = #{orderDO.payAmount, jdbcType=DECIMAL},
+            </if>
+        </trim>
+        WHERE order_sn = #{orderDO.orderSn}
+    </update>
+
+    <update id="updateStatusByOrderSn">
+        update time_period_order set order_status = #{orderStatus} where order_sn = #{orderSn}
+    </update>
+
+</mapper>

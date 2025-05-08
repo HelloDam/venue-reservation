@@ -1,0 +1,34 @@
+server:
+  port: 7050
+#  servlet:
+#    context-path: /vrs
+spring:
+  profiles:
+    active: dam
+  application:
+    name: vrs-admin
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+logging:
+  level:
+    org.springframework.web: DEBUG
+    org.springframework.web.servlet: DEBUG
+# springdoc-openapi项目配置
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+  api-docs:
+    path: /admin/v3/api-docs
+  group-configs:
+    - group: 'default'
+      paths-to-match: '/**'
+      packages-to-scan: com.vrs.controller
+# knife4j的增强配置，不需要增强可以不配
+knife4j:
+  enable: true
+  setting:
+    language: zh_cn

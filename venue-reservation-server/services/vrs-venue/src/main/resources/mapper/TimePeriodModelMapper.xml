@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vrs.mapper.TimePeriodModelMapper">
+    <sql id="Base_Column_List">
+        id,create_time,update_time,
+        is_deleted,price,partition_id,
+        begin_time,end_time,effective_start_date,
+        effective_end_date,status
+    </sql>
+    <update id="updateLastGeneratedDateBatch">
+        UPDATE time_period_model
+        SET last_generated_date = CASE
+        <foreach collection="timePeriodDOModelUpdateBatch" item="item" separator=" ">
+            WHEN id = #{item.id} AND partition_id = #{item.partitionId} THEN #{item.lastGeneratedDate}
+        </foreach>
+        ELSE last_generated_date
+        END
+        WHERE
+        <foreach collection="timePeriodDOModelUpdateBatch" item="item" separator=" OR ">
+            (id = #{item.id} AND partition_id = #{item.partitionId})
+        </foreach>
+    </update>
+    <select id="selectOverlapModel" resultType="com.vrs.domain.entity.TimePeriodModelDO">
+        SELECT *
+        FROM `time_period_model`
+        WHERE `partition_id` = #{period.partitionId}
+          AND `is_deleted` = 0
+          AND `status` = 0
+          AND (
+                (TIME (#{period.beginTime}) >= begin_time AND end_time > TIME (#{period.beginTime})) OR
+                (TIME (#{period.endTime}) > begin_time AND end_time >= TIME (#{period.endTime}))
+            )
+          AND DATE (#{period.effectiveStartDate}) >= effective_start_date
+          AND effective_end_date >= DATE (#{period.effectiveStartDate})
+    </select>
+</mapper>

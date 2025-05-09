@@ -198,10 +198,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO>
         //// 存储用户信息
         // 使用jwt创建token
         String token = JwtUtil.createToken(userDO.getId(), userDO.getUserName(), userDO.getUserType(), userDO.getOrganizationId());
-        // 将生成的token和用户信息存储到redis里面
-        stringRedisTemplate.opsForHash().put(USER_LOGIN_KEY + userDO.getUserName(), token, JSON.toJSONString(userDO));
-        // 设置过期时间
-        stringRedisTemplate.expire(USER_LOGIN_KEY + userDO.getUserName(), EXPIRE_TIME, EXPIRE_TIME_UNIT);
         return new UserLoginRespDTO(token);
     }
 

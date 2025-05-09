@@ -1,11 +1,9 @@
 package com.vrs.filter;
 
 import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONObject;
 import com.vrs.common.GatewayResult;
 import com.vrs.common.WhitePathConfig;
 import com.vrs.config.IpFlowControlConfiguration;
-import com.vrs.constant.RedisCacheConstant;
 import com.vrs.utils.FlowLimitUtil;
 import com.vrs.utils.IpUtils;
 import com.vrs.utils.JwtUtil;
@@ -17,7 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 import reactor.core.publisher.Mono;
 
 import java.net.URLEncoder;
@@ -60,32 +57,27 @@ public class TokenValidateGatewayFilterFactory extends AbstractGatewayFilterFact
                 // --if-- 当前请求路径不在白名单中
                 String token = request.getHeaders().getFirst("token");
                 // 用户名为空，或者不存在于Redis中，返回错误提示
-                response = exchange.getResponse();
                 String userName = "";
                 try {
                     userName = JwtUtil.getUsername(token);
                 } catch (Exception e) {
-                    return writeResult(response, e.getMessage());
+                    response.setStatusCode(HttpStatus.UNAUTHORIZED);
+                    return writeResult(response, "没有通过登录校验，请先登录");
                 }
-                Object userInfo;
-                if (StringUtils.hasText(userName) && StringUtils.hasText(token) &&
-                        (userInfo = stringRedisTemplate.opsForHash().get(RedisCacheConstant.USER_LOGIN_KEY + userName, token)) != null) {
-                    JSONObject userInfoJsonObject = JSON.parseObject(userInfo.toString());
-                    // 将解析出来的信息放到请求头中，避免上下文封装的时候还需要去查询一遍
-                    ServerHttpRequest.Builder builder = exchange.getRequest().mutate().headers(httpHeaders -> {
-                        httpHeaders.set("userId", userInfoJsonObject.getString("id"));
-                        httpHeaders.set("userType", userInfoJsonObject.getString("userType"));
-                        httpHeaders.set("organizationId", userInfoJsonObject.getString("organizationId"));
-                        httpHeaders.set("userName", URLEncoder.encode(userInfoJsonObject.getString("userName"), StandardCharsets.UTF_8));
-                    });
-                    return chain.filter(exchange.mutate().request(builder.build()).build());
-                }
-                response.setStatusCode(HttpStatus.UNAUTHORIZED);
-                return writeResult(response, "没有通过登录校验，请先登录");
+                // 将解析出来的信息放到请求头中，避免上下文封装的时候还需要去查询一遍
+                String finalUserName = userName;
+                ServerHttpRequest.Builder builder = exchange.getRequest().mutate().headers(httpHeaders -> {
+                    httpHeaders.set("userId", JwtUtil.getUserId(token).toString());
+                    httpHeaders.set("userType", JwtUtil.getUserType(token).toString());
+                    httpHeaders.set("organizationId", JwtUtil.getOrganizationId(token).toString());
+                    httpHeaders.set("userName", URLEncoder.encode(finalUserName, StandardCharsets.UTF_8));
+                });
+                return chain.filter(exchange.mutate().request(builder.build()).build());
             }
             return chain.filter(exchange);
         };
     }
+
 
     /**
      * 返回结果给前端

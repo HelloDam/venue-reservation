@@ -27,6 +27,7 @@
     <img src="pic/fc6cb56450a8898b4738f4a90dea1fc.jpg" width="280" height="auto" alt="场地预定" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);"/>
     <img src="pic/f3015aa117ce632c39179a34ae99c9e.jpg" width="280" height="auto" alt="场地号选择" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);"/>
     <img src="pic/cac0d50891c78ebfc042294760ed211.jpg" width="280" height="auto" alt="订单详情" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);"/>
+    <img src="pic/9508d49a75a22f6c0dfdb5ef5aa729d.jpg" width="280" height="auto" alt="支付宝付款" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);"/>    
     <img src="pic/ddee3dc83e25c11c9fa308d5621e363.jpg" width="280" height="auto" alt="我的页面" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);"/>
     <img src="pic/18c6b3665d84e62ae446888a7371d19.jpg" width="280" height="auto" alt="核销二维码" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);"/>
     <img src="pic/7c92e706f94472ba4e6fa0f8bc1eb65.jpg" width="280" height="auto" alt="订单详情" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);"/>
@@ -45,10 +46,9 @@
 
 ### 🔐 **分布式认证与权限控制**  
 
-**ThreadLocal + JWT + Redis + Gateway**  
-- **实现分布式Token共享与权限控制**  
-- **网关层统一鉴权过滤**  
-- **解决微服务环境下的登录态传递问题**  
+**ThreadLocal + JWT + Gateway**  
+- **使用 JWT 无状态特性存储登录态**  
+- **网关层统一鉴权过滤**   
 
 ### ⚡ **性能优化方案**  
 

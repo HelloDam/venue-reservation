@@ -35,5 +35,6 @@ buildNumber.properties
 **/application-aggerationDamM.yml
 **/application-aggerationDam.yml
 **/venue-reservation-server/upload/**
+**/venue-reservation-server/tmp/**
 **/*.jks
 **/.DS_Store
